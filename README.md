@@ -1,10 +1,17 @@
-# About this version 
-I used the following tutorial to make an iso for pc-engines apu2:
+# About
+I wanted to install Yunohost on a PC-Engines APU2 board.
+But it was not as simple as i thought.
+Before that you shall :
+* get serial port cable
+* modify the ISO of the distribution
+* do the installation in a serial port console
+* compromise about the drive you want to use
 
-"Howto install Debian Jessie (8.2) via the serial console using boot media (USB stick)"
-http://pcengines.info/forums/?page=post&id=51C5DE97-2D0E-40E9-BFF7-7F7FE30E18F
+Anyway, for the second point, 
+i used the following tutorial from PC-Engines forum to make an iso for the pc-engines apu2:
+[Howto install Debian Jessie (8.2) via the serial console using boot media (USB stick)](http://pcengines.info/forums/?page=post&id=51C5DE97-2D0E-40E9-BFF7-7F7FE30E18F)
 
-Instead of taking the debian CD i take yunohost-jessie-0127171259-amd64-stable.iso
+Instead of taking the Debian CD, i took yunohost-jessie-0127171259-amd64-stable.iso
 
 Next, i made `yunohost-mkserialiso.sh` to have all the procedure in a script.
 
@@ -59,5 +66,5 @@ You can use `minicom` command prepared in the script like that :
 Note that the listening of port shall begin before the boot sequence.
 
 # Installation
-Boot your machine...
+Boot your machine... (In my case. Installation on a SDCard fails, so i changed target drive to a Sata Hard Drive)
 
