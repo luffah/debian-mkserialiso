@@ -47,7 +47,7 @@ where `/dev/sdX` is your USB key device.
 Put with the way you can, the iso in your machine. (Virtual ISO / USB port)
 
 ## With VirtualBox
-In the VirtualBox machine configuration (section 'Serial Ports'),you shall define a 'Host Pipe' nammed '/tmp/yunohost'.
+In the VirtualBox machine configuration (section 'Serial Ports'),you shall define a 'Host Pipe' nammed `/tmp/yunohost`.
 
 To listen you can use `socat` command prepared in the script like that :  
 `sh yunohost-mkserialiso.sh socat /tmp/yunohost`
