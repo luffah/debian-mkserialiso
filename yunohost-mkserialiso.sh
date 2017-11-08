@@ -8,8 +8,10 @@
 # Howto to get Debian Jessie to install via the serial console using boot media
 # http://pcengines.info/forums/?page=post&id=51C5DE97-2D0E-40E9-BFF7-7F7FE30E18FE
 
-# Assuming CDROMM name don't change
-YUNOHOSTCDNAME="CDROM"
+# Option specific to the distribution
+CDNAME="CDROM" # CDROM is the name of the device for yunohost iso
+PRESEED="preseed/file=/cdrom/simple-cdd/default.preseed" # preseed boot optior for yunohost
+INITRD="initrd=/install.amd/initrd.gz"
 # The rate to communicate by the serial port to the board
 BAUDRATE=115200 # apu2
 
@@ -49,19 +51,20 @@ prepare_syslinux(){
   menu label ^Install
   menu default
   kernel /install.amd/vmlinuz 
-  append preseed/file=/cdrom/simple-cdd/default.preseed vga=off console=ttyS0,${BAUDRATE}n8 initrd=/install.amd/initrd.gz --- console=ttyS0,${BAUDRATE}n8
+  append ${PRESEED} vga=off console=ttyS0,${BAUDRATE}n8 ${INITRD} --- console=ttyS0,${BAUDRATE}n8
 """ > $1/isolinux/txt.cfg
-  echo """
-  label expert
-  menu label ^Expert install
-  kernel /install.amd/vmlinuz
-  append priority=low preseed/file=/cdrom/simple-cdd/default.preseed vga=off console=ttyS0,${BAUDRATE}n8 initrd=/install.amd/initrd.gz --- console=ttyS0,${BAUDRATE}n8
-  include rqtxt.cfg
-  label auto
-  menu label ^Automated install
-  kernel /install.amd/vmlinuz
-  append auto=true priority=critical preseed/file=/cdrom/simple-cdd/default.preseed vga=off console=ttyS0,${BAUDRATE}n8 initrd=/install.amd/initrd.gz --- console=ttyS0,${BAUDRATE}n8
-""" > $1/isolinux/adtxt.cfg 
+# This part is useless, given you can't choose wich version to run
+#  echo """
+#  label expert
+#  menu label ^Expert install
+#  kernel /install.amd/vmlinuz
+#  append priority=low ${PRESEED} vga=off console=ttyS0,${BAUDRATE}n8 ${INITRD} --- console=ttyS0,${BAUDRATE}n8
+#  include rqtxt.cfg
+#  label auto
+#  menu label ^Automated install
+#  kernel /install.amd/vmlinuz
+#  append auto=true priority=critical ${PRESEED} vga=off console=ttyS0,${BAUDRATE}n8 ${INITRD} --- console=ttyS0,${BAUDRATE}n8
+#""" > $1/isolinux/adtxt.cfg 
   chmod 555  $1/isolinux/
   chmod 444  $1/isolinux/*
   return 0
@@ -98,12 +101,11 @@ case $1 in
   make)
     if [ -z $2 ]
     then
-      echo "You have to precise Yunohost iso in argument"
+      echo "You have to precise the iso in argument"
       exit 1
     fi
     DIRNAME="`extract_iso $2`" &&
-      read &&
-    bash $0 syslinux ${DIRNAME} && read &&
+    bash $0 syslinux ${DIRNAME} &&
     bash $0 toiso ${DIRNAME} ${DIRNAME}.iso 
     exit $?
   ;;
@@ -120,7 +122,7 @@ case $1 in
     then
       xorriso -as mkisofs -r -J -joliet-long -l -cache-inodes  \
         -isohybrid-mbr `locate isohdpfx.bin` -partition_offset 16 \
-        -A "${YUNOHOSTCDNAME}" -b isolinux/isolinux.bin -c isolinux/boot.cat   -no-emul-boot -boot-load-size 4 -boot-info-table   -o $3 $2
+        -A "${CDNAME}" -b isolinux/isolinux.bin -c isolinux/boot.cat   -no-emul-boot -boot-load-size 4 -boot-info-table   -o $3 $2
       echo "ISO is build"
       echo "To write it to a disk , do "
       echo "'$0 dd $3 /dev/sdX' where sdXY is the device to write."
